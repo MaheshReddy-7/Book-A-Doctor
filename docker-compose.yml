@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb+srv://Admin:password123456@bookadoctor.swsgmra.mongodb.net/book-a-doctor?retryWrites=true&w=majority
+      - JWT_SECRET=supersecretkeyforjwttokensigning123!
+      - JWT_EXPIRES_IN=7d
+      - NODE_ENV=production
+      - UPLOAD_PATH=uploads
+      - DEFAULT_ADMIN_EMAIL=admin@bookadoctor.com
+      - DEFAULT_ADMIN_PASSWORD=Admin123!
+    volumes:
+      - backend-uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000/api
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  backend-uploads:
